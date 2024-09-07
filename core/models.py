@@ -24,7 +24,7 @@ class Resturent(models.Model):
     
 class Rating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    resturent = models.ForeignKey(Resturent, on_delete=models.CASCADE)
+    resturent = models.ForeignKey(Resturent, on_delete=models.CASCADE, related_name='ratings')
     rating = models.PositiveSmallIntegerField()
     
     def __str__(self):
@@ -34,7 +34,7 @@ class Rating(models.Model):
     
     
 class Sale(models.Model):
-    resturent = models.ForeignKey(Resturent, on_delete=models.CASCADE, null=True)
+    resturent = models.ForeignKey(Resturent, on_delete=models.CASCADE, null=True, related_name='sales')
     income = models.DecimalField(max_digits=8, decimal_places=2)
     date_time = models.DateTimeField()
     

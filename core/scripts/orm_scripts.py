@@ -1,4 +1,4 @@
-from core.models import Resturent,Rating
+from core.models import Resturent,Rating,Sale
 from django.utils import timezone
 from django.db import connection
 from django.contrib.auth.models import User
@@ -56,10 +56,46 @@ def run():
     
     
     # change the name of first resturent name
-    resturent = Resturent.objects.first()
-    print(resturent.name)
-    resturent.name = "changed name"
-    resturent.save()
+    # resturent = Resturent.objects.first()
+    # print(resturent.name)
+    # resturent.name = "changed name"
+    # resturent.save()
+    
+    
+    # useing resturent name
+    # rating = Rating.objects.first()
+    # print(rating.resturent)
+    
+    # get all the rating of a resturent
+    # resturent = Resturent.objects.first()
+    # print(resturent.rating_set.all())
+    
+    # we can do the same thing by related name
+    # resturent = Resturent.objects.first()
+    # print(resturent.ratings.all())
+    
+    
+    # creating some sales
+    # Sale.objects.create(
+    #     resturent=Resturent.objects.first(),
+    #     income=2.34,
+    #     date_time=timezone.now()
+    # )
+    
+    
+    # get or get rating
+    user = User.objects.first()
+    resturent = Resturent.objects.last()
+    rating, created = Rating.objects.get_or_create(
+        resturent=resturent,
+        user=user,
+        rating=1
+    )
+    
+    if created:
+        #send email
+        pass
+
     
     
     pprint(connection.queries)
