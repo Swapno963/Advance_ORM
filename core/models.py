@@ -15,6 +15,7 @@ class Resturent(models.Model):
         ITALIAN = 'IT', 'Italian'
         GREEK = 'GR', 'GREEK'
         MEXICAN = 'MD', 'Mexican'
+        FASTFOOD = 'FD', 'FastFood'
         OTHER = 'OT', 'Other'
         
         
