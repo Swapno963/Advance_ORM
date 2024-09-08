@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
+from django.db.models.functions import Lower
+
 # custom validator
 def validate_resturent_name_begins_with_a(value):
     if not value.startwith("a"):
@@ -26,6 +28,8 @@ class Resturent(models.Model):
     longitude = models.FloatField()
     resturent_type = models.CharField(max_length=2,choices=TypeChoces.choices)
     
+    class Meta:
+        ordering = [Lower('name')] # if we don't tell how to order then this is going to be default order
     def __str__(self):
         return self.name
     
