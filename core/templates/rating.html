@@ -1,0 +1,8 @@
+{% block content%}
+<ul>
+  <h3>This is ratings</h3>
+  {%for rating in ratings %}
+  <li>{{rating.resturent}} - {{rating.rating}}-{{rating.user.email}}</li>
+  {%endfor%}
+</ul>
+{% endblock %}

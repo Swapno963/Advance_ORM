@@ -40,7 +40,10 @@ def run():
     # print(rating)
     
     # all sels belongs to chinise resturent
-    chinese = Resturent.TypeChoces.CHINESE
-    sales = Sale.objects.filter(resturent__resturent_type=chinese)
-    print(sales)
+    # chinese = Resturent.TypeChoces.CHINESE
+    # sales = Sale.objects.filter(resturent__resturent_type=chinese)
+    
+    
+    sales = Sale.objects.first()
+    print(sales.income)
     pprint(connection.queries)

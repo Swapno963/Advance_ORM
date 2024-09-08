@@ -1,0 +1,15 @@
+{% block content%} {%for resturent in resturents %}
+<p>{{resturent.name}}</p>
+<ul>
+  <h3>This is ratings</h3>
+  {%for rating in resturent.ratings.all %}
+  <li>{{rating.rating}}</li>
+  {%endfor%}
+</ul>
+<ul>
+  <h3>This is sales</h3>
+  {%for sale in resturent.sales.all %}
+  <li>{{sale.income}}</li>
+  {%endfor%}
+</ul>
+{%endfor%} {% endblock %}
