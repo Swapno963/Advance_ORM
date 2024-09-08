@@ -28,6 +28,10 @@ class Resturent(models.Model):
     def __str__(self):
         return self.name
     
+    def save(self, *args, **kwargs): # if we want to do some task besed one one obj created first time
+        print(self._state.adding)
+        super().save(*args, **kwargs)
+    
 class Rating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     resturent = models.ForeignKey(Resturent, on_delete=models.CASCADE, related_name='ratings')
