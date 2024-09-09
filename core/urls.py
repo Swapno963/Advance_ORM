@@ -6,4 +6,5 @@ urlpatterns = [
     path('', index),
     path('r', rating),
     path('f', fiveStar_again),
-]+ debug_toolbar_urls()
+]
+# + debug_toolbar_urls()
