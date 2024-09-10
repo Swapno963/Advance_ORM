@@ -70,7 +70,11 @@ class Rating(models.Model):
 class Sale(models.Model):
     resturent = models.ForeignKey(Resturent, on_delete=models.CASCADE, null=True, related_name='sales')
     income = models.DecimalField(max_digits=8, decimal_places=2)
+    expenditure = models.DecimalField(max_digits=8, decimal_places=2)
     date_time = models.DateTimeField()
+    
+    def __str__(self):
+        return f"Income: {self.income} expenditure: {self.expenditure}"
     
     
     
