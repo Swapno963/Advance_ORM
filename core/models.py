@@ -27,6 +27,8 @@ class Resturent(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     resturent_type = models.CharField(max_length=2,choices=TypeChoces.choices)
+    capacity = models.PositiveIntegerField(null=True, blank=True)
+    nickname = models.CharField(max_length=200, null=True, blank=True)
     
     class Meta:
         ordering = [Lower('name')] # if we don't tell how to order then this is going to be default order
