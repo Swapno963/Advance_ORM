@@ -44,3 +44,9 @@
 ## 11. Case and When
 - **Why Use It**: `Case` and `When` allow you to perform conditional logic within database queries, similar to if-else statements, but on the database side.
 - **Real-World Use Case**: Applying discounts based on customer status (e.g., VIP, regular) when querying a list of orders in an online store.
+
+
+## 12. Summary of Real-World Use Cases:
+- **Subquery**: Retrieve related data (like the latest comment for each post) in a single query.
+- **OuterRef**: Reference the outer query’s fields (like the customer pk) within a subquery to find related data.
+- **Exists**: Efficiently check if related data exists (like whether a job has any applications).
