@@ -3,8 +3,9 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 from django.db.models.functions import Lower
-from django.db.models import Count,Avg,Min,Max,Value,CharField,Sum,F,Q
-
+from django.db.models import Count,Avg,Min,Max,Value,CharField,Sum,F,Q,Case,When
+from django.utils import timezone
+from datetime import date
 # custom validator
 def validate_resturent_name_begins_with_a(value):
     if not value.startwith("a"):
@@ -29,10 +30,25 @@ class Resturent(models.Model):
     longitude = models.FloatField()
     resturent_type = models.CharField(max_length=2,choices=TypeChoces.choices)
     capacity = models.PositiveIntegerField(null=True, blank=True)
-    nickname = models.CharField(max_length=200, null=True, blank=True)
+    nickname = models.CharField(max_length=200, default="")
+    
+    
+    @property
+    def resturent_name(self):
+        return self.nickname or self.name
+    
+    @property
+    def was_opened_this_year(self) ->bool:
+        current_year = timezone.now().year
+        return self.date_opened.year == current_year
+    
+    # method
+    def is_opened_after(self, date:date) ->bool:
+        return self.date_opened > date
     
     class Meta:
         ordering = [Lower('name')] # if we don't tell how to order then this is going to be default order
+    
     def __str__(self):
         return self.name
     
@@ -83,6 +99,24 @@ class Sale(models.Model):
     income = models.DecimalField(max_digits=8, decimal_places=2)
     expenditure = models.DecimalField(max_digits=8, decimal_places=2)
     date_time = models.DateTimeField()
+    
+    profit = models.GeneratedField(
+        expression = models.F('income') - models.F("expenditure"),
+        output_field=models.DecimalField(max_digits=5, decimal_places=2),
+        db_persist=True
+    )
+    
+    # conditionaly set tip
+    suggested_tip = models.GeneratedField(
+        expression=Case(
+            When(income__gte=10, then=models.F('income') * 0.2),
+            default=Value(0),
+            output_field=models.DecimalField(max_digits=5, decimal_places=2),
+        ),
+            output_field=models.DecimalField(max_digits=5, decimal_places=2),
+            db_persist=True
+    )
+    
     
     def __str__(self):
         return f"Income: {self.income} expenditure: {self.expenditure}"
