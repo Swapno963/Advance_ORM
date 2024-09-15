@@ -2,7 +2,9 @@ from django.shortcuts import render
 from .models import Resturent,Rating,Sale
 from django.db.models import Sum,Prefetch
 from django.utils import timezone
-
+from django.db import transaction
+from .forms import ProductOrderForm
+from functools import partial
 # Create your views here.
 def index(request):
     # resturents = Resturent.objects.all() #This is not efficient
@@ -46,3 +48,24 @@ def fiveStar_again(request):
         # .annotate(total=Sum('sales__income'))
     print("resturnt:",resturent,' total_money',total_money)
     # context = { 'ratings':rating} 
+    
+    
+def sendEmail(email):
+    print('sending email',email)
+
+def order_product(request):
+    if request.method == "POST":
+        form = ProductOrderForm(request.POST)
+        if form.is_valid():
+            with transaction.atomic():
+                order = form.save()
+                # if after saving the order the server crash then the order will be rolled back
+                order.product.number_in_stock -= order.number_of_items
+                order.product.save()
+            # transaction.on_commit(sendEmail) # if the transicition heappen properly only then  this function will execute
+            
+            # but there we can't pass any arguments but we an bind them with partial
+            transaction.on_commit(partial(sendEmail,"s@g.com"))
+    form = ProductOrderForm()
+    context = {'form': form}
+    return render(request, 'order.html',context)

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 from django.db.models.functions import Lower
+from django.db.models import Count,Avg,Min,Max,Value,CharField,Sum,F,Q
 
 # custom validator
 def validate_resturent_name_begins_with_a(value):
@@ -66,7 +67,15 @@ class Rating(models.Model):
     def __str__(self):
         return f"Rating: {self.rating}"
     
-    
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+            name="raing_value_valid",
+            check=Q(rating__gte=1, rating__lte=5),
+            violation_error_message="Rataing invalid: Must fall between 1 and 5."
+            )
+   
+        ]
     
     
 class Sale(models.Model):
@@ -226,8 +235,56 @@ class Payment(models.Model):
     
     
     
+class Product(models.Model):
+    name = models.CharField(max_length=100)
+    number_in_stock = models.PositiveIntegerField()
+    
+    def __str__(self):
+        return f"{self.name}--{self.number_in_stock}"
+    
+    
+class Order(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    number_of_items = models.PositiveBigIntegerField()
+    
+    def __str__(self):
+        return f"{self.number_of_items}--{self.product.name}"
+    
+
+
+   # For prooxy model
+   
+class TaskStatus(models.IntegerChoices):
+    TODO = 1
+    IN_PROGRESS = 2
+    COMPLETED = 3
+    
+class Task(models.Model):
+    name = models.CharField(max_length=100)
+    created_at = models.DateField(auto_now_add=True)
+    status = models.IntegerField(choices=TaskStatus.choices)
+    
+    
+    def __str__(self):
+        return self.name
     
     
     
+# lets create custom manager
+class InProgressTask(Task):
+    class Meta:
+        proxy = True
+        ordering = ('created_at',) # added custom ordering
+    class Manager(models.Manager):
+        def get_queryset(self):
+            return super().get_queryset().filter(status=TaskStatus.IN_PROGRESS)
+        
+    # we want to do something if the task is added for first time
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            self.status = TaskStatus.IN_PROGRESS
+        super().save(*args, **kwargs)
+        
+    objects = Manager()
     
     
